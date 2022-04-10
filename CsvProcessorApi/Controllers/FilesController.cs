@@ -1,9 +1,8 @@
-﻿using CsvHelper;
-using CsvHelper.Configuration;
-using CsvProcessorApi.Mappers;
-using CsvProcessorApi.Models;
+﻿using CsvProcessorApi.Models;
+using CsvProcessorApi.Models.Responses;
+using CsvProcessorApi.Services;
+using CsvProcessorApi.Utils;
 using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
 
 namespace CsvProcessorApi.Controllers
 {
@@ -11,35 +10,46 @@ namespace CsvProcessorApi.Controllers
     [ApiController]
     public class FilesController : ControllerBase
     {
+        private readonly ICsvService _csvServices;
+        private readonly ICsvServiceDb _csvServiceDb;
+
+        public FilesController(
+            ICsvService csvServices,
+            ICsvServiceDb csvServiceDb)
+        {
+            _csvServices = csvServices;
+            _csvServiceDb = csvServiceDb;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<DataCollection<DetailModel>?>> Get(
+            int page = 1, 
+            int take = 10, 
+            string? ids = null)
+        {
+            try
+            {
+                return Ok(await _csvServiceDb.GetAllAsync(page, take, ids));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult> Post(IFormFile file)
         {
-            string fullPathFile = GetFullPathFile(file);
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            try
             {
-                //PrepareHeaderForMatch = args => args.Header.ToLower(),
-                Delimiter = ";"
-            };
-            using (var reader = new StreamReader(fullPathFile))
-            using (var csv = new CsvReader(reader, config))
-            {
-                //csv.Context.RegisterClassMap<DetailsMap>();
-                var records = csv.GetRecords<Details>().ToList();
+                FileResponse csvFile = _csvServices.ReadCsvFile(file);
+                await _csvServiceDb.Insert(csvFile);
+                return Ok();
             }
-
-            return Ok();
-        }
-
-        private string GetFullPathFile(IFormFile file)
-        {
-            string filePath = Environment.CurrentDirectory + $"\\Files\\" + file.FileName;
-            using (FileStream fileStream = System.IO.File.Create(filePath))
+            catch (Exception ex)
             {
-                file.CopyTo(fileStream);
-                fileStream.Flush();
+                return BadRequest(ex.Message);
             }
-
-            return filePath;
         }
     }
 }

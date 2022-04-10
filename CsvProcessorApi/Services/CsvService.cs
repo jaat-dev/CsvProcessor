@@ -1,43 +1,52 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
 using CsvProcessorApi.Models;
+using CsvProcessorApi.Models.Mappers;
+using CsvProcessorApi.Models.Responses;
 using System.Globalization;
 
 namespace CsvProcessorApi.Services
 {
     public class CsvService : ICsvService
     {
-        public List<Details> ReadCsvFileToEmployeeModel(string fullPathFile)
+        public FileResponse ReadCsvFile(IFormFile file)
         {
             try
             {
+                string fullPathFile = GetFullPathFile(file);
                 var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                 {
                     Delimiter = ";"
                 };
-                using (var reader = new StreamReader(fullPathFile))
-                using (var csv = new CsvReader(reader, config))
+                using var reader = new StreamReader(fullPathFile);
+                using var csv = new CsvReader(reader, config);
+                var records = csv.GetRecords<DetailMap>().ToList();
+                var response = new FileResponse
                 {
-                    var records = csv.GetRecords<Details>().ToList();
-                    return records;
-                }
+                    DetailList = records,
+                    FileModel = new FileModel
+                    {
+                        FileName = file.FileName,
+                        TotalRows = records.Count
+                    }
+                };
+                return response;
             }
-            catch (UnauthorizedAccessException e)
+            catch (Exception ex)
             {
-                throw new Exception(e.Message);
+                throw new Exception(ex.Message);
             }
-            catch (FieldValidationException e)
+        }
+
+        private static string GetFullPathFile(IFormFile file)
+        {
+            string filePath = Environment.CurrentDirectory + $"\\Files\\" + file.FileName;
+            using (FileStream fileStream = System.IO.File.Create(filePath))
             {
-                throw new Exception(e.Message);
+                file.CopyTo(fileStream);
+                fileStream.Flush();
             }
-            catch (CsvHelperException e)
-            {
-                throw new Exception(e.Message);
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
+            return filePath;
         }
     }
 }

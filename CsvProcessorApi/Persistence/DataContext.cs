@@ -9,7 +9,7 @@ namespace CsvProcessorApi.Persistence
         {
         }
 
-        public DbSet<CsvProcessorApi.Persistence.Entities.File> Files { get; set; }
-        public DbSet<FileDetail> FileDetails { get; set; }
+        public DbSet<FileEntity> Files { get; set; }
+        public DbSet<FileDetailEntity> FileDetails { get; set; }
     }
 }

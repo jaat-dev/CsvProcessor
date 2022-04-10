@@ -1,9 +1,9 @@
-﻿using CsvProcessorApi.Models;
+﻿using CsvProcessorApi.Models.Responses;
 
 namespace CsvProcessorApi.Services
 {
     public interface ICsvService
     {
-        List<Details> ReadCsvFileToEmployeeModel(string fullPathFile);
+        FileResponse ReadCsvFile(IFormFile file);
     }
 }
