@@ -1,0 +1,28 @@
+<!-- Upload  -->
+<div style="margin-top: 80px">
+  <form id="file-upload-form" class="uploader">
+    <input
+      #fileUpload
+      id="file-csv"
+      type="file"
+      (change)="onFileSelected($event)"
+      name="fileUpload"
+      accept=".csv"
+    />
+
+    <label for="file-csv" id="file-drag">
+      <div id="start">
+        <i class="fa fa-download" aria-hidden="true"></i>
+        <div>Select a file with csv format</div>
+        <span id="file-csv-btn" class="btn btn-primary">Select a file</span>
+        <input
+          type="button"
+          value="Upload"
+          class="btn btn-primary"
+          (click)="onUpLoad()"
+        />
+      </div>
+    </label>
+  </form>
+</div>
+
