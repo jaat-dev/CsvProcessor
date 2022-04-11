@@ -21,15 +21,14 @@ namespace CsvProcessorApi.Controllers
             _csvServiceDb = csvServiceDb;
         }
 
-        [HttpGet]
+        [HttpGet("{page:int}/{take:int}")]
         public async Task<ActionResult<DataCollection<DetailModel>?>> Get(
             int page = 1, 
-            int take = 10, 
-            string? ids = null)
+            int take = 10)
         {
             try
             {
-                return Ok(await _csvServiceDb.GetAllAsync(page, take, ids));
+                return Ok(await _csvServiceDb.GetAllAsync(page, take));
             }
             catch (Exception ex)
             {

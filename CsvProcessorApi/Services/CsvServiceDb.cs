@@ -3,7 +3,7 @@ using CsvProcessorApi.Models.Responses;
 using CsvProcessorApi.Persistence;
 using CsvProcessorApi.Persistence.Entities;
 using CsvProcessorApi.Utils;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace CsvProcessorApi.Services
 {
@@ -16,17 +16,9 @@ namespace CsvProcessorApi.Services
             _db = db;
         }
 
-        public async Task<DataCollection<DetailModel>?> GetAllAsync(int page, int take, string? ids)
+        public async Task<DataCollection<DetailModel>?> GetAllAsync(int page, int take)
         {
-            IEnumerable<Guid>? details = null;
-
-            if (!string.IsNullOrEmpty(ids))
-            {
-                details = ids.Split(',').Select(x => Guid.Parse(x));
-            }
-
             var collection = await _db.FileDetails
-                .Where(x => details == null || details.Contains(x.Id))
                 .OrderBy(x => x.LastName)
                 .GetPagedAsync(page, take);
 

@@ -1,0 +1,40 @@
+<mat-toolbar color="primary">
+  <ng-container *ngIf="isAdmin">
+    <span>
+      <a routerLink="cargar-archivo"  mat-button>
+        <mat-icon>upload_file</mat-icon> Procesador CSV
+      </a>
+    </span>
+    <div>
+      <a mat-button routerLink="cargar-archivo">
+        <mat-icon>upload</mat-icon>Cargar Archivo</a
+      >
+    </div>
+    <div>
+      <a mat-button routerLink="consultar">
+        <mat-icon>search</mat-icon>Consultar</a
+      >
+    </div>
+    <span class="example-spacer"></span>
+    <button (click)="seguridadService.logout()"
+      mat-icon-button class="example-icon"
+      aria-label="Example icon-button with share icon">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </ng-container>
+
+  <ng-container *ngIf="isLoged">
+    <div>
+      <a mat-button routerLink="consultar">
+        <mat-icon>search</mat-icon>Consultar</a
+      >
+    </div>
+
+    <span class="example-spacer"></span>
+    <button (click)="seguridadService.logout()"
+      mat-icon-button class="example-icon"
+      aria-label="Example icon-button with share icon">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </ng-container>
+</mat-toolbar>

@@ -290,3 +290,8 @@ svg#clouds {
     visibility: hidden;
   }
 }
+
+/*------------------------------------------------------*/
+.contenedor {
+  margin: 20px;
+}

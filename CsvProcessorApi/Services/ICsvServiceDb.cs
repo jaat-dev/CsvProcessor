@@ -7,7 +7,7 @@ namespace CsvProcessorApi.Services
     public interface ICsvServiceDb
     {
 
-        Task<DataCollection<DetailModel>?> GetAllAsync(int page, int take, string? ids);
+        Task<DataCollection<DetailModel>?> GetAllAsync(int page, int take);
         Task<int> Insert(FileResponse csvFile);
     }
 }
